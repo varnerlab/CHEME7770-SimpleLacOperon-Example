@@ -1,0 +1,7 @@
+// === main logic circuit ===================================================== //
+
+// expression of the lac repressor -
+gene_system activates gene_lacI
+
+// repression of lacZ, lacY and lacA -
+gene_lacI inhibits (gene_lacZ,gene_lacY,gene_lacA)
