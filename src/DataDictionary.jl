@@ -86,7 +86,7 @@ function DataDictionary(time_start::Float64,time_stop::Float64,time_step_size::F
 	fraction_nucleus = 0.0             	# dimensionless
 	av_number = 6.02e23                 # number/mol
 	avg_gene_number = 2                 # number of copies of a gene
-	polysome_number = 10								# number of ribsomoses per transcript
+	polysome_number = 4								# number of ribsomoses per transcript
 	# ------------------------------------------------------------------------------------------#
 	#
 	# ------------------------------------------------------------------------------------------#
@@ -117,8 +117,8 @@ function DataDictionary(time_start::Float64,time_stop::Float64,time_step_size::F
 	death_rate_constant = 0.2*maximum_specific_growth_rate                            # hr^-1
 
 	# Saturation constants for translation and trascription -
-	saturation_transcription = 4600*(1/av_number)*(1/V)*1e9                           # nM
-	saturation_translation = 100000*(1/av_number)*(1/V)*1e9                           # nM
+	saturation_transcription = 600*(1/av_number)*(1/V)*1e9                           # nM
+	saturation_translation = 120000*(1/av_number)*(1/V)*1e9                           # nM
 	# -------------------------------------------------------------------------------------------#
 
 	# initial condition array -
@@ -164,25 +164,49 @@ function DataDictionary(time_start::Float64,time_stop::Float64,time_step_size::F
 	control_parameter_dictionary["W_gene_lacZ_gene_lacI"] = 10.0
 	control_parameter_dictionary["W_gene_system_RNAP"] = 0.0
 
+	# Alias the misc parameters -
+	misc_parameter_dictionary = Dict{AbstractString,Float64}()
+	misc_parameter_dictionary["rnapII_concentration"] = rnapII_concentration  # muM
+	misc_parameter_dictionary["ribosome_concentration"] = ribosome_concentration # muM
+	misc_parameter_dictionary["degradation_constant_mRNA"] = degradation_constant_mRNA  # hr^-1
+	misc_parameter_dictionary["degradation_constant_protein"] = degradation_constant_protein  # hr^-1
+	misc_parameter_dictionary["kcat_transcription"] = kcat_transcription  # hr^-1
+	misc_parameter_dictionary["kcat_translation"] = kcat_translation  # hr^-1
+	misc_parameter_dictionary["maximum_specific_growth_rate"] = maximum_specific_growth_rate  # hr^-1
+	misc_parameter_dictionary["avg_gene_concentration"] = avg_gene_concentration
+	misc_parameter_dictionary["saturation_constant_transcription"] = saturation_transcription
+	misc_parameter_dictionary["saturation_constant_translation"] = saturation_translation
+
 	# Parameter name index array -
 	parameter_name_mapping_array = [
-		"n_gene_lacA_gene_lacI"	;	# 1
-		"K_gene_lacA_gene_lacI"	;	# 2
+		"n_gene_lacA_gene_lacI"	;		# 1
+		"K_gene_lacA_gene_lacI"	;		# 2
 		"n_gene_lacI_gene_system"	;	# 3
 		"K_gene_lacI_gene_system"	;	# 4
-		"n_gene_lacY_gene_lacI"	;	# 5
-		"K_gene_lacY_gene_lacI"	;	# 6
-		"n_gene_lacZ_gene_lacI"	;	# 7
-		"K_gene_lacZ_gene_lacI"	;	# 8
-		"W_gene_lacA_RNAP"	;	# 9
-		"W_gene_lacA_gene_lacI"	;	# 10
-		"W_gene_lacI_RNAP"	;	# 11
-		"W_gene_lacI_gene_system"	;	# 12
-		"W_gene_lacY_RNAP"	;	# 13
-		"W_gene_lacY_gene_lacI"	;	# 14
-		"W_gene_lacZ_RNAP"	;	# 15
-		"W_gene_lacZ_gene_lacI"	;	# 16
-		"W_gene_system_RNAP"	;	# 17
+		"n_gene_lacY_gene_lacI"	;		# 5
+		"K_gene_lacY_gene_lacI"	;		# 6
+		"n_gene_lacZ_gene_lacI"	;		# 7
+		"K_gene_lacZ_gene_lacI"	;		# 8
+
+		"W_gene_lacA_RNAP"	;					# 1 9
+		"W_gene_lacA_gene_lacI"	;			# 2	10
+		"W_gene_lacI_RNAP"	;					# 3 11
+		"W_gene_lacI_gene_system"	;		# 4	12
+		"W_gene_lacY_RNAP"	;					# 5	13
+		"W_gene_lacY_gene_lacI"	;			# 6	14
+		"W_gene_lacZ_RNAP"	;					# 7	15
+		"W_gene_lacZ_gene_lacI"	;			# 8	16
+		"W_gene_system_RNAP"	;				# 9	17
+
+		"rnapII_concentration"	; 		# 1 18
+		"ribosome_concentration"	;		# 2 19
+		"degradation_constant_mRNA"	;	# 3 20
+		"degradation_constant_protein"	;	# 4 21
+		"kcat_transcription"	;				# 5 22
+		"kcat_translation"	;					# 6 23
+		"maximum_specific_growth_rate"	;	# 7 24
+		"saturation_constant_transcription"	;	# 8 25
+		"saturation_constant_translation"	;	# 9 26
 	]
 
 
@@ -194,6 +218,7 @@ function DataDictionary(time_start::Float64,time_stop::Float64,time_step_size::F
 	data_dictionary["gene_coding_length_array"] = gene_coding_length_array
 	data_dictionary["mRNA_coding_length_array"] = mRNA_coding_length_array
 	data_dictionary["protein_coding_length_array"] = protein_coding_length_array
+
 	data_dictionary["rnapII_concentration"] = rnapII_concentration  # muM
 	data_dictionary["ribosome_concentration"] = ribosome_concentration # muM
 	data_dictionary["degradation_constant_mRNA"] = degradation_constant_mRNA  # hr^-1
@@ -212,6 +237,7 @@ function DataDictionary(time_start::Float64,time_stop::Float64,time_step_size::F
 
 	data_dictionary["binding_parameter_dictionary"] = binding_parameter_dictionary
 	data_dictionary["control_parameter_dictionary"] = control_parameter_dictionary
+	data_dictionary["misc_parameter_dictionary"] = misc_parameter_dictionary
 	data_dictionary["parameter_name_mapping_array"] = parameter_name_mapping_array
 
 	# Signaling data added by JV -

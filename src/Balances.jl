@@ -35,6 +35,29 @@
 # Return arguments:
 # dxdt - derivative array at current time step
 # ----------------------------------------------------------------------------------- #
+function AdjBalances(t,x,parameter_index,data_dictionary)
+
+  @show t
+
+  state_array = x[1:15]
+  sensitivity_array = x[16:end]
+
+  # call -
+  dxdt_array = Balances(t,state_array,data_dictionary)
+
+  # Calculate the sensitivity states -
+  local_data_dictionary = copy(data_dictionary)
+  JM = calculate_jacobian(t,state_array,local_data_dictionary)
+  BM = calculate_bmatrix(t,state_array,local_data_dictionary)
+
+  # calulate the sensitivity state -
+  dsdt_array = JM*sensitivity_array+BM[:,parameter_index]
+  r_array = [dxdt_array ; dsdt_array]
+
+  # return -
+  return r_array
+end
+
 function Balances(t,x,data_dictionary)
 
   # correct for negatives -

@@ -1,3 +1,72 @@
+function ss_repressed_adj_simulation(time_start,time_stop,time_step_size,parameter_index,data_dictionary)
+  # First - run the model to steady-state w/no ATRA forcing -
+  XSS = estimate_steady_state(0.001,data_dictionary)
+
+  # Next, set the IC to the steady-state value -
+  initial_condition_array = XSS;
+  number_of_states = length(XSS)
+  data_dictionary["initial_condition_array"] = initial_condition_array;
+
+  # Phase 1: Run the model 1/4 of the final time w/o ATRA
+  # Run the model for a section of time w/no ATRA forcing -
+  time_start_phase_1 = 0.0;
+  time_stop_phase_1 = 14.0;
+
+  # Solve the model equations -
+  (TP1,XP1) = SolveBalances(time_start_phase_1,time_stop_phase_1,time_step_size,data_dictionary);
+
+  # Phase 2
+  initial_condition_array = XP1[end,:];
+  initial_condition_array = [initial_condition_array ; zeros(number_of_states)]
+  data_dictionary["initial_condition_array"] = initial_condition_array;
+
+  # Run the model for a section of time -
+  time_start_phase_2 = time_stop_phase_1+time_step_size
+  time_stop_phase_2 = time_start_phase_2 + 1.0
+
+  # Solve the model equations -
+  (TP2,XP2) = SolveAdjBalances(time_start_phase_2,time_stop_phase_2,time_step_size,parameter_index,data_dictionary);
+
+  return (TP2,XP2);
+end
+
+function repressed_adj_simulation(time_start,time_stop,time_step_size,parameter_index,data_dictionary)
+
+  # First - run the model to steady-state w/no ATRA forcing -
+  XSS = estimate_steady_state(0.001,data_dictionary)
+
+  # Next, set the IC to the steady-state value -
+  initial_condition_array = XSS;
+  number_of_states = length(XSS)
+  data_dictionary["initial_condition_array"] = initial_condition_array;
+
+  # Phase 1: Run the model 1/4 of the final time w/o ATRA
+  # Run the model for a section of time w/no ATRA forcing -
+  time_start_phase_1 = 0.0;
+  time_stop_phase_1 = 14.0;
+
+  # Solve the model equations -
+  (TP1,XP1) = SolveBalances(time_start_phase_1,time_stop_phase_1,time_step_size,data_dictionary);
+
+  # Phase 2
+  initial_condition_array = XP1[end,:];
+  initial_condition_array = [initial_condition_array ; zeros(number_of_states)]
+  data_dictionary["initial_condition_array"] = initial_condition_array;
+
+  # update the expression of system -
+  control_parameter_dictionary = data_dictionary["control_parameter_dictionary"]
+  control_parameter_dictionary["W_gene_system_RNAP"] = 0.005
+
+  # Run the model for a section of time -
+  time_start_phase_2 = time_stop_phase_1+time_step_size
+  time_stop_phase_2 = time_start_phase_2 + 1.0
+
+  # Solve the model equations -
+  (TP2,XP2) = SolveAdjBalances(time_start_phase_2,time_stop_phase_2,time_step_size,parameter_index,data_dictionary);
+
+  return (TP2,XP2);
+end
+
 function repressed_simulation(time_start,time_stop,time_step_size,data_dictionary)
 
   # First - run the model to steady-state w/no ATRA forcing -
